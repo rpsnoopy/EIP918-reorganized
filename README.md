@@ -123,20 +123,18 @@ function mint(uint256 nonce) public returns (bool success)
 ```
 
 **NOTES**:
-1) In particular, the method must verify a submitted solution, described by the `nonce` (see later):
+In particular, the method `mint()` must verify a submitted solution, described by the `nonce` (see later):
 * IF the solution found is the first valid solution submitted for the current epoch:
-    a) rewards the solution found sending No. `miningReward tokens` to `msg.sender`;
-    b) creates a new `challengeNumber` valid for the next POW epoch;
-    c) eventually adjusts the POW difficulty;
-    d) return true
-* ELSE the solution is not the first valid solution submitted for the current epoch and it returns false (or **revert**).
+a) rewards the solution found sending No. `miningReward tokens` to `msg.sender`;
+b) creates a new `challengeNumber` valid for the next POW epoch;
+c) eventually adjusts the POW difficulty;
+d) return true
+* ELSE the solution is not the first valid solution submitted for the current epoch and it returns false (or, in very common implementation, **revert**).
 
 2) The first phase (hash check) MUST BE implemented using the below specified public function `hash()`, while the internal structure of the `mint()` is recommended (see Recommendation), but it is not mandatory.
 
 
-
 #### hash
-
 Returns the digest calculated by the algorithm of hashing used in the particular implementation, whatever it will be.
 
 ```solidity
@@ -147,9 +145,7 @@ function hash(uint256 nonce, address minter, bytes32 challengeNumber) public ret
 
 
 ### Events
-
 #### Mint
-
 The `Mint` event indicates the rewarded address, the reward amount, the epoch count and the `challengeNumber` used in order to find the solution.
 
 ```solidity
