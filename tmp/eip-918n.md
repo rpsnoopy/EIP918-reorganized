@@ -232,6 +232,25 @@ function mint(uint256 _nonce, bytes32 _challenge_digest) public returns (bool su
 
 < here, properly reorganized, all the suitable elements from the current draft (interface, abstract contract, etc.) >
 
+### Abstract contracts
+
+In order to implement the standard, the following abstract contract can be included and inheritated by the smart contract.
+
+`contract AEIP918B  {
+    function challengeNumber() public view returns (bytes32);
+    function difficulty() public view returns (uint256);
+    function epochCount() public view returns (uint256);
+    function adjustmentInterval () public view returns (uint256);
+    function miningTarget () public view returns (uint256);
+    function miningReward() public view returns (uint256);
+    function tokensMinted() public view returns (uint256);
+    function mint(uint256 nonce) public returns (bool success);
+    function hash(uint256 nonce, address minter, bytes32 challengeNumber) public returns (bytes32 digest);
+    event Mint(	address indexed _to, uint _reward, uint _epochCount, bytes32 _challengeNumber);
+} //END OF EIP918 `
+
+**NOTES**: GIVEN THAT THE CURRENT VERSION OF THE SOLIDITY COMPILER (0.4.25) IS NOT YET ABLE TO MANAGE IMPLICIT PUBLIC VARIABLES GETTER AS VALID OVERLOADS ON INTERFACES AND ABSTRACT CONTRACTS, INCLUDING THE PREVIOUS VERSION OF THE ABSTRACT CONTRACT IN ORDER TO BE COMPLIANT CAN GENERATE SYNTAX ERRORS IF THE OVERLOADING FUNCTIONS ARE INTENDED TO BE THE AUTOMATICLY CREATED GETTER OF PUBLIC VARIABLES WITH THE SAME NAME. THE CURRENT SOLUTIONS ARE: (i) to move public variables declarations in the abstract contract and to omit the related method declaration, or (ii) to name the public variable differently and to write the getter using the naming convention declared by the standard.
+
 
 #### Test Cases
 -
