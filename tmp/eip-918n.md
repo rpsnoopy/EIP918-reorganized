@@ -236,7 +236,7 @@ here, properly reorganized, all the suitable elements from the current draft (in
 
 In order to implement the standard, the following abstract contract can be included and inheritated by the smart contract.
 
-```js
+```solidity
 contract AEIP918B  {
   function challengeNumber() public view returns (bytes32);
   function difficulty() public view returns (uint256);
