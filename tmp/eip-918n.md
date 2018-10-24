@@ -41,7 +41,7 @@ It can be here mentioned that token distribution via POW is considered very inte
 
 Returns the current `challengeNumber`, i.e. a byte32 number to be included (with other elements, see later) in the POW algorithm input in order to synthesize a valid solution. It is expected that a new `challengeNumber` is generated after that the valid solution has been found and the reward tokens have been assigned.
 
-```js
+```solidity
 function challengeNumber() view public returns (bytes32)
 ```
 
@@ -53,7 +53,7 @@ function challengeNumber() view public returns (bytes32)
 
 Returns the current difficulty, i.e. a number useful to estimate (by means of some known algorithm) the mean time required to find a valid POW solution. It is expected that the `difficulty` varies if the smart contract controls the mean time between valid solutions by means of some control loop.
 
-```js
+```solidity
 function difficulty() view public returns (uint256)
 ```
 
@@ -66,7 +66,7 @@ function difficulty() view public returns (uint256)
 Returns the current epoch, i.e. the number of successful minting operation so far (starting from zero).
 
 
-```js
+```solidity
 function epochCount() view public returns (uint256)
 ```
 
@@ -75,7 +75,7 @@ function epochCount() view public returns (uint256)
 
 Returns the interval, in seconds, between two successive difficulty adjustment.
 
-```js
+```solidity
 function adjustmentInterval () view public returns (uint256)
 ```
 
@@ -86,7 +86,7 @@ function adjustmentInterval () view public returns (uint256)
 
 Returns the miningTarget, i.e. a number which is a threshold useful to evaluate if a given submitted POW solution is valid.
 
-```js
+```solidity
 function miningTarget () view public returns (uint256)
 ```
 
@@ -97,7 +97,7 @@ function miningTarget () view public returns (uint256)
 
 Returns the number of tokens that POW faucet shall dispense as next reward.
 
-```js
+```solidity
 function miningReward() view public returns (uint256)
 ```
 
@@ -109,7 +109,7 @@ function miningReward() view public returns (uint256)
 
 Returns the total number of tokens dispensed so far by POW faucet
 
-```js
+```solidity
 function tokensMinted() view public returns (uint256)
 ```
 
@@ -118,7 +118,7 @@ function tokensMinted() view public returns (uint256)
 
 Returns a flag indicating that the submitted solution has been considered the valid solution for the current epoch and rewarded, and that all the activities needed in order to launch the new epoch have been successfully completed.
 
-```js
+```solidity
 function mint(uint256 nonce) public returns (bool success)
 ```
 
@@ -139,7 +139,7 @@ function mint(uint256 nonce) public returns (bool success)
 
 Returns the digest calculated by the algorithm of hashing used in the particular implementation, whatever it will be.
 
-```js
+```solidity
 function hash(uint256 nonce, address minter, bytes32 challengeNumber) public returns (bytes32 digest)
 ```
 
@@ -152,7 +152,7 @@ function hash(uint256 nonce, address minter, bytes32 challengeNumber) public ret
 
 The Mint event indicates the rewarded address, the reward amount, the epoch count and the challenge number used.
 
-```js
+```solidity
 event Mint(address indexed _to, uint _reward, uint _epochCount, bytes32 _challengeNumber)
 ```
 
@@ -190,7 +190,7 @@ It may be useful to recall that a Mint event MUST BE emitted before returning a 
 
 In a sample compliant realization, the mint can be then roughly described as follows:
 
-```js
+```solidity
 function mint(uint256 nonce) public returns (bool success) {
     require (hash(nonce, minter, challengeNumber) < byte32(miningTarget), “Invalid solution”);
     emit Mint(minter, _reward(), _epochCount, _challengeNumber);
@@ -203,7 +203,7 @@ function mint(uint256 nonce) public returns (bool success) {
 ## Backwards Compatibility
 In order to facilitate the use of both existing mining programs and existing pool software already used to mine minable tokens deployed before the emission of the present standard, the following functions can be included in the contract. They are simply a wrapping of some of the above defined functions:
 
-```js
+```solidity
 function getAdjustmentInterval() public view returns (uint) {
             return adjustmentInterval();
 }
