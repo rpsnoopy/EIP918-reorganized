@@ -197,6 +197,17 @@ function mint(uint256 nonce) public returns (bool success) {
 }
 ```
 
+### Merged mining
+Merge mining (i.e. the possibility to obtain multiple tokens reward by means of the same POW solution found) is nor mandatory, nor recommended, but in the case that a merge mining facility have to be implemented, it is **MANDATORY** to implement it by means of a dedicated methods, as follows:
+
+```solidity
+function merge(uint256 nonce, bytes32 challenge_digest, address[] mineTokens) public returns (bool success);
+```
+
+It is a method operationally very similar to the `mint()` methods, except that in the `merge()` a list of token target addresses is intended to be used to merge the multiple token rewards.
+
+
+
 ## Backwards Compatibility
 In order to facilitate the use of both existing mining programs and existing pool software already used to mine any token deployed before the emission of the present standard, the following functions can be included in the contract. They are simply a wrapping of some of the above defined functions:
 
@@ -222,16 +233,6 @@ function mint(uint256 _nonce, bytes32 _challenge_digest) public returns (bool su
 ```
 
 **NOTES**: Any already existing token implementing this interface can be declared compliant to EIP918-B (B for Backwards). **EIP918-B compliance is deprecated.**
-
-## Merged mining
-Merge mining (i.e. the possibility to obtain multiple tokens reward by means of the same POW solution found) is nor mandatory, nor recommended, but in the case that a merge mining facility have to be implemented, it is **MANDATORY** to implement it by means of a dedicated methods, as follows:
-
-```solidity
-function merge(uint256 nonce, bytes32 challenge_digest, address[] mineTokens) public returns (bool success);
-```
-
-It is a method operationally very similar to the `mint()` methods, except that in the `merge()` a list of token target addresses is intended to be used to merge the multiple token rewards.
-
 
 ## Implementation notes and examples
 here, properly reorganized, all the suitable elements from the current draft (interface, abstract contract, etc.)
