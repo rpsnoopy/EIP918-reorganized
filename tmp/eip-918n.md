@@ -238,20 +238,20 @@ In order to implement the standard, the following abstract contract can be inclu
 
 ```js
 contract AEIP918B  {
-function challengeNumber() public view returns (bytes32);
-function difficulty() public view returns (uint256);
-function epochCount() public view returns (uint256);
-function adjustmentInterval () public view returns (uint256);
-function miningTarget () public view returns (uint256);
-function miningReward() public view returns (uint256);
-function tokensMinted() public view returns (uint256);
-function mint(uint256 nonce) public returns (bool success);
-function hash(uint256 nonce, address minter, bytes32 challengeNumber) public returns (bytes32 digest);
-event Mint(	address indexed _to, uint _reward, uint _epochCount, bytes32 _challengeNumber);
+  function challengeNumber() public view returns (bytes32);
+  function difficulty() public view returns (uint256);
+  function epochCount() public view returns (uint256);
+  function adjustmentInterval () public view returns (uint256);
+  function miningTarget () public view returns (uint256);
+  function miningReward() public view returns (uint256);
+  function tokensMinted() public view returns (uint256);
+  function mint(uint256 nonce) public returns (bool success);
+  function hash(uint256 nonce, address minter, bytes32 challengeNumber) public returns (bytes32 digest);
+  event Mint(address indexed _to, uint _reward, uint _epochCount, bytes32 _challengeNumber);
 }
 ```
 
-**NOTES**: GIVEN THAT THE CURRENT VERSION OF THE SOLIDITY COMPILER (0.4.25) IS NOT YET ABLE TO MANAGE IMPLICIT PUBLIC VARIABLES GETTER AS VALID OVERLOADS ON INTERFACES AND ABSTRACT CONTRACTS, INCLUDING THE PREVIOUS VERSION OF THE ABSTRACT CONTRACT IN ORDER TO BE COMPLIANT CAN GENERATE SYNTAX ERRORS IF THE OVERLOADING FUNCTIONS ARE INTENDED TO BE THE AUTOMATICLY CREATED GETTER OF PUBLIC VARIABLES WITH THE SAME NAME. THE CURRENT SOLUTIONS ARE: (i) to move public variables declarations in the abstract contract and to omit the related method declaration, or (ii) to name the public variable differently and to write the getter using the naming convention declared by the standard.
+**NOTES**: given that the current version of the solidity compiler (0.4.25) is not yet able to manage implicit public variables getter as valid overloads on interfaces and abstract contracts, including the previous version of the abstract contract in order to be compliant can generate syntax errors if the overloading functions are intended to be the automaticly created getter of public variables with the same name. the current solutions are: (i) to move public variables declarations in the abstract contract and to omit the related method declaration, or (ii) to name the public variable differently and to write the getter using the naming convention declared by the standard.
 
 
 #### Test Cases
@@ -263,9 +263,9 @@ event Mint(	address indexed _to, uint _reward, uint _epochCount, bytes32 _challe
 
 Historical links related to this standard:
 
-- Original proposal from Jay Logelin: https://github.com/ethereum/wiki/wiki/Standardized_Contract_APIs/499c882f3ec123537fc2fccd57eaa29e6032fe4a
-- Reddit discussion: https://www.reddit.com/r/ethereum/comments/3n8fkn/lets_talk_about_the_coin_standard/
-- Original Issue EIP918: https://github.com/ethereum/EIPs/issues/918
+- Original proposal from Jay Logelin: https://github.com/ethereum/wiki/wiki/Some
+- Reddit discussion: https://www.reddit.com/r/ethereum/comments/3n8fkn/some/
+- Original Issue EIP918: https://github.com/ethereum/EIPs/issues/918/some
 -
 -
 
