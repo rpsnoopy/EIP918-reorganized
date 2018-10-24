@@ -1,62 +1,63 @@
 ---
-eip: 20
-title: ERC-20 Token Standard
-author: Fabian Vogelsteller <fabian@ethereum.org>, Vitalik Buterin <vitalik.buterin@ethereum.org>
+eip: 918
+title: ERC-918 Minable Token Standard
+author: Jay Logelin <jlogelin@fas.harvard.edu>, Infernal_toast <admin@0xbitcoin.org>, Michael Seiler <mgs33@cornell.edu>, Brandon Grill <bg2655@columbia.edu>, Rick Park <ceo@xbdao.io>
 type: Standards Track
 category: ERC
-status: Final
-created: 2015-11-19
+status: Draft
+created: 2018-10-23
 ---
 
 ## Simple Summary
 
-A standard interface for tokens.
+A specification for a standardized Minable Token that uses a Proof of Work algorithm for distribution.
 
 
 ## Abstract
 
-The following standard allows for the implementation of a standard API for tokens within smart contracts.
-This standard provides basic functionality to transfer tokens, as well as allow tokens to be approved so they can be spent by another on-chain third party.
+he following standard allows for the implementation of a standard API for tokens within smart contracts when including a POW (Proof of Work) mining distribution facility.
+In this kind of token contract, tokens are locked within a token smart contract and slowly dispensed by means of a mint() function which acts like a POW faucet when the user submit a valid solution of some Proof of Work algorithm. The tokens are dispensed in chunks formed by some tokens (reward).
 
 
 ## Motivation
 
-A standard interface allows any tokens on Ethereum to be re-used by other applications: from wallets to decentralized exchanges.
+The rationale for this model is that this approach can both minimize the gas fees paid by miners in order to obtain tokens and precisely control the distribution rate.
+The standardization of the API will allow the development of standardized CPU and GPU token mining software, token mining pools and other external tools in the token mining ecosystem.
+This standard is intended to be integrable in any token smart contract which eventually implements any other EIP standard for the non-mining-related functions, like ERC20, ERC223, ERC721, etc.
+It can be here mentioned that token distribution via POW is considered very interesting in order to minimize the investor's risks exposure related to eventual illicit behavior of the 'human actors' who launch and manage the distribution, like those implementing ICO's (Initial Coin Offer) and derivatives. The POW model can be totally realized by means of a smart contract, excluding human interferences.
 
 
 ## Specification
 
-## Token
-### Methods
+### Mandatory methods
 
 **NOTES**:
- - The following specifications use syntax from Solidity `0.4.17` (or above)
+ - The following specifications use syntax from Solidity `0.4.25` (or above)
  - Callers MUST handle `false` from `returns (bool success)`.  Callers MUST NOT assume that `false` is never returned!
 
 
-#### name
 
-Returns the name of the token - e.g. `"MyToken"`.
+#### challengeNumber
 
-OPTIONAL - This method can be used to improve usability,
-but interfaces and other contracts MUST NOT expect these values to be present.
+Returns the current challengeNumber, i.e. a byte32 number to be included (with other elements, see later) in the POW algorithm input in order to synthetize a valid solution. It is expected that a new challengeNumber is generated after that the valid solution has been found and the reward tokens have been assigned.
 
-
-``` js
-function name() public view returns (string)
+``` solidity
+function challengeNumber() view public returns (bytes32)
 ```
 
+NOTES: in a common implementation, challengeNumber is calculated starting from some immutable data, like elements derived from some past ethereum blocks.
 
-#### symbol
 
-Returns the symbol of the token. E.g. "HIX".
 
-OPTIONAL - This method can be used to improve usability,
-but interfaces and other contracts MUST NOT expect these values to be present.
+#### difficulty
 
-``` js
-function symbol() public view returns (string)
+Returns the current difficulty, i.e. a number useful to estimate (by means of some known algorithm) the mean time required to find a valid POW solution. It is expected that the difficulty varies if the smart contract controls the mean time between valid solutions by means of some control loop.
+
+``` solidity 
+function difficulty() view public returns (uint256)
 ```
+
+NOTES: in a common implementation, difficulty varies when computational power is added/subtracted to the network, in order to maintain stable the mean time between valid solutions found.
 
 
 
