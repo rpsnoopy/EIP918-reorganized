@@ -41,8 +41,7 @@ It can be here mentioned that token distribution via POW is considered very inte
 
 Returns the current `challengeNumber`, i.e. a byte32 number to be included (with other elements, see later) in the POW algorithm input in order to synthesize a valid solution. It is expected that a new `challengeNumber` is generated after that the valid solution has been found and the reward tokens have been assigned.
 
-
-```solidity
+```js
 function challengeNumber() view public returns (bytes32)
 ```
 
@@ -54,7 +53,7 @@ function challengeNumber() view public returns (bytes32)
 
 Returns the current difficulty, i.e. a number useful to estimate (by means of some known algorithm) the mean time required to find a valid POW solution. It is expected that the `difficulty` varies if the smart contract controls the mean time between valid solutions by means of some control loop.
 
-```solidity
+```js
 function difficulty() view public returns (uint256)
 ```
 
@@ -67,7 +66,7 @@ function difficulty() view public returns (uint256)
 Returns the current epoch, i.e. the number of successful minting operation so far (starting from zero).
 
 
-```solidity
+```js
 function epochCount() view public returns (uint256)
 ```
 
@@ -76,7 +75,7 @@ function epochCount() view public returns (uint256)
 
 Returns the interval, in seconds, between two successive difficulty adjustment.
 
-```solidity
+```js
 function adjustmentInterval () view public returns (uint256)
 ```
 
@@ -87,7 +86,7 @@ function adjustmentInterval () view public returns (uint256)
 
 Returns the miningTarget, i.e. a number which is a threshold useful to evaluate if a given submitted POW solution is valid.
 
-```solidity
+```js
 function miningTarget () view public returns (uint256)
 ```
 
@@ -98,7 +97,7 @@ function miningTarget () view public returns (uint256)
 
 Returns the number of tokens that POW faucet shall dispense as next reward.
 
-```solidity
+```js
 function miningReward() view public returns (uint256)
 ```
 
@@ -110,7 +109,7 @@ function miningReward() view public returns (uint256)
 
 Returns the total number of tokens dispensed so far by POW faucet
 
-```solidity
+```js
 function tokensMinted() view public returns (uint256)
 ```
 
@@ -119,7 +118,7 @@ function tokensMinted() view public returns (uint256)
 
 Returns a flag indicating that the submitted solution has been considered the valid solution for the current epoch and rewarded, and that all the activities needed in order to launch the new epoch have been successfully completed.
 
-```solidity
+```js
 function mint(uint256 nonce) public returns (bool success)
 ```
 
@@ -140,7 +139,7 @@ function mint(uint256 nonce) public returns (bool success)
 
 Returns the digest calculated by the algorithm of hashing used in the particular implementation, whatever it will be.
 
-```solidity
+```js
 function hash(uint256 nonce, address minter, bytes32 challengeNumber) public returns (bytes32 digest)
 ```
 
@@ -153,32 +152,30 @@ function hash(uint256 nonce, address minter, bytes32 challengeNumber) public ret
 
 The Mint event indicates the rewarded address, the reward amount, the epoch count and the challenge number used.
 
-```solidity
+```js
 event Mint(address indexed _to, uint _reward, uint _epochCount, bytes32 _challengeNumber)
 ```
 
 **NOTES**: TO BE MANDATORY EMITTED immediately after that the submitted solution is rewarded.
 
 
+## Recommendation
 
-
-##Recommendation
-
-###MITM attacks
+#### MITM attacks
 
 To prevent man-in-the-middle attacks, the msg.sender address, which is the address eventually rewarded, should be part of the hash so that any nonce solution found is valid only for that particular Ethereum account and it is not susceptible to be used by other. This also allows pools to operate without being easily cheated by the miners because pools can force miners to mine using the pool’s address in the hash algorithm. In that a case, indeed, the pool is the only address able to collect rewards.
 
-###Anticipated mining
+#### Anticipated mining
 
 In order to avoid that miners are in condition to calculate anticipated solutions for later epoch, a “challengeNumber”, i.e. a number somehow derived from existing but mutable conditions, should be part of the hash so that future blocks cannot be mined before. The “challengeNumber” acts like a random piece of data that is not revealed until a mining round starts.
 
-###Hash functions
+### Hash functions
 The use of solidity keccak256 algorithm is strongly recommended, even if not mandatory, because it is a very cost effective one-way algorithm to compute in the EVM environment and it is available as built-in function in solidity.
 
-###Solution representation
+### Solution representation
 The recommended representation of the solution found is by a ‘nonce’, i.e. a number, that miners try to find, that being part of the digest make the value of the hash of the digest itself under the required threshold for validity.
 
-###mint() internal structure
+### mint() internal structure
 From the miner point of view, submitting a solution for possible reward means to call the mint() function with the suitable arguments and waiting for evaluation results.
 It is recommended that internally the `mint()` function be realized invoking 4 separate successive phases: hash check, rewarding, epoch increment, difficulty adjustment.
 The first phase (hash check) MUST BE implemented using the specified `public function hash()`, while an internal `function mint()` structure is recommended, but it is not mandatory. In particular the following phases, being totally internal to the contract, cannot be specified as mandatory, but the schema where four explicit and subsequent phases are evidenced (hash check, rewarding, epoch increment and difficulty adjustment) is recommended.
@@ -193,7 +190,7 @@ It may be useful to recall that a Mint event MUST BE emitted before returning a 
 
 In a sample compliant realization, the mint can be then roughly described as follows:
 
-```solidity
+```js
 function mint(uint256 nonce) public returns (bool success) {
     require (hash(nonce, minter, challengeNumber) < byte32(miningTarget), “Invalid solution”);
     emit Mint(minter, _reward(), _epochCount, _challengeNumber);
@@ -203,10 +200,10 @@ function mint(uint256 nonce) public returns (bool success) {
 }
 ```            
 
-##Backwards Compatibility
+## Backwards Compatibility
 In order to facilitate the use of both existing mining programs and existing pool software already used to mine minable tokens deployed before the emission of the present standard, the following functions can be included in the contract. They are simply a wrapping of some of the above defined functions:
 
-```solidity
+```js
 function getAdjustmentInterval() public view returns (uint) {
             return adjustmentInterval();
 }
@@ -227,7 +224,7 @@ function mint(uint256 _nonce, bytes32 _challenge_digest) public returns (bool su
 }
 ```
 
-**NOTES**: Any already existing token implementing this interface can be declared compliant to EIP918-B (B for Backwards). EIP918-B compliance is deprecated.
+**NOTES**: Any already existing token implementing this interface can be declared compliant to EIP918-B (B for Backwards). **EIP918-B compliance is deprecated.**
 
 
 
@@ -237,7 +234,9 @@ function mint(uint256 _nonce, bytes32 _challenge_digest) public returns (bool su
 
 
 #### Test Cases
-
+-
+-
+-
 
 ## History
 
