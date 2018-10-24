@@ -151,12 +151,13 @@ function hash(uint256 nonce, address minter, bytes32 challengeNumber) public ret
 
 #### Mint
 
-TO BE MANDATORY EMITTED immediately after that the submitted solution is rewarded. The Mint event indicates the rewarded address, the reward amount, the epoch count and the challenge number used.
+The Mint event indicates the rewarded address, the reward amount, the epoch count and the challenge number used.
 
 ```solidity
 event Mint(address indexed _to, uint _reward, uint _epochCount, bytes32 _challengeNumber)
 ```
 
+**NOTES**: TO BE MANDATORY EMITTED immediately after that the submitted solution is rewarded.
 
 ##Recommendation
 
