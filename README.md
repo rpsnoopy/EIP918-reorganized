@@ -123,7 +123,8 @@ function mint(uint256 nonce) public returns (bool success)
 ```
 
 **NOTES**:
-In particular, the method `mint()` must verify a submitted solution, described by the `nonce` (see later):
+
+1) In particular, the method `mint()` must verify a submitted solution, described by the `nonce` (see later):
 * IF the solution found is the first valid solution submitted for the current epoch:
 a) rewards the solution found sending No. `miningReward tokens` to `msg.sender`;
 b) creates a new `challengeNumber` valid for the next POW epoch;
