@@ -159,6 +159,9 @@ event Mint(address indexed _to, uint _reward, uint _epochCount, bytes32 _challen
 
 **NOTES**: TO BE MANDATORY EMITTED immediately after that the submitted solution is rewarded.
 
+
+
+
 ##Recommendation
 
 ###MITM attacks
