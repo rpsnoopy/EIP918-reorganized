@@ -230,7 +230,7 @@ function mint(uint256 _nonce, bytes32 _challenge_digest) public returns (bool su
 
 ## Implementation notes and examples
 
-< here, properly reorganized, all the suitable elements from the current draft (interface, abstract contract, etc.) >
+here, properly reorganized, all the suitable elements from the current draft (interface, abstract contract, etc.)
 
 ### Abstract contracts
 
