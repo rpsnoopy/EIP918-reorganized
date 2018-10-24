@@ -10,7 +10,7 @@ created: 2018-10-23
 
 ## Simple Summary
 
-A specification for a standardized Minable Token that uses a Proof of Work algorithm for distribution.
+A specification for a standardized minable Token that uses a Proof of Work algorithm for distribution.
 
 
 ## Abstract
@@ -31,33 +31,34 @@ It can be here mentioned that token distribution via POW is considered very inte
 
 ### Mandatory methods
 
+
 **NOTES**:
  - The following specifications use syntax from Solidity `0.4.25` (or above)
  - Callers MUST handle `false` from `returns (bool success)`.  Callers MUST NOT assume that `false` is never returned!
 
 
-
 #### challengeNumber
 
-Returns the current challengeNumber, i.e. a byte32 number to be included (with other elements, see later) in the POW algorithm input in order to synthetize a valid solution. It is expected that a new challengeNumber is generated after that the valid solution has been found and the reward tokens have been assigned.
+Returns the current `challengeNumber`, i.e. a byte32 number to be included (with other elements, see later) in the POW algorithm input in order to synthesize a valid solution. It is expected that a new `challengeNumber` is generated after that the valid solution has been found and the reward tokens have been assigned.
 
-``` js
+
+```solidity
 function challengeNumber() view public returns (bytes32)
 ```
 
-NOTES: in a common implementation, challengeNumber is calculated starting from some immutable data, like elements derived from some past ethereum blocks.
+**NOTES**: in a common implementation `challengeNumber` is calculated starting from some immutable data, like elements derived from some past ethereum blocks.
 
 
 
 #### difficulty
 
-Returns the current difficulty, i.e. a number useful to estimate (by means of some known algorithm) the mean time required to find a valid POW solution. It is expected that the difficulty varies if the smart contract controls the mean time between valid solutions by means of some control loop.
+Returns the current difficulty, i.e. a number useful to estimate (by means of some known algorithm) the mean time required to find a valid POW solution. It is expected that the `difficulty` varies if the smart contract controls the mean time between valid solutions by means of some control loop.
 
-``` js
+```solidity
 function difficulty() view public returns (uint256)
 ```
 
-NOTES: in a common implementation, difficulty varies when computational power is added/subtracted to the network, in order to maintain stable the mean time between valid solutions found.
+**NOTES**: in a common implementation, difficulty varies when computational power is added/subtracted to the network, in order to maintain stable the mean time between valid solutions found.
 
 
 
@@ -66,7 +67,7 @@ NOTES: in a common implementation, difficulty varies when computational power is
 Returns the current epoch, i.e. the number of successful minting operation so far (starting from zero).
 
 
-``` js
+```solidity
 function epochCount() view public returns (uint256)
 ```
 
@@ -75,33 +76,33 @@ function epochCount() view public returns (uint256)
 
 Returns the interval, in seconds, between two successive difficulty adjustment.
 
-``` js
+```solidity
 function adjustmentInterval () view public returns (uint256)
 ```
 
-NOTES: in a common implementation, while difficulty varies when computational power is added/subtracted to the network, the adjustmentInterval is fixed at deploy time.
+**NOTES**: in a common implementation, while difficulty varies when computational power is added/subtracted to the network, the adjustmentInterval is fixed at deploy time.
 
 
 #### miningTarget
 
 Returns the miningTarget, i.e. a number which is a threshold useful to evaluate if a given submitted POW solution is valid.
 
-``` js
+```solidity
 function miningTarget () view public returns (uint256)
 ```
 
-NOTES: in a common implementation, the solution is valid if lower than the miningTarget.
+**NOTES**: in a common implementation, the solution is valid if lower than the miningTarget.
 
 
 #### miningReward
 
 Returns the number of tokens that POW faucet shall dispense as next reward.
 
-``` js
+```solidity
 function miningReward() view public returns (uint256)
 ```
 
-NOTES: in a common implementation, the reward progressively diminishes toward zero trough the epochs (“epoch” is mining cycle started by the generation of a new challengeNumber and ended by the reward assignment), in order to have a maximum number of tokens dispensed in the whole life of the token smart contract, i.e. after that the maximum number of tokens has been dispensed, no more tokens will be dispensed.
+**NOTES**: in a common implementation, the reward progressively diminishes toward zero trough the epochs (“epoch” is mining cycle started by the generation of a new challengeNumber and ended by the reward assignment), in order to have a maximum number of tokens dispensed in the whole life of the token smart contract, i.e. after that the maximum number of tokens has been dispensed, no more tokens will be dispensed.
 
 
 
@@ -109,7 +110,7 @@ NOTES: in a common implementation, the reward progressively diminishes toward ze
 
 Returns the total number of tokens dispensed so far by POW faucet
 
-``` js
+```solidity
 function tokensMinted() view public returns (uint256)
 ```
 
@@ -118,11 +119,12 @@ function tokensMinted() view public returns (uint256)
 
 Returns a flag indicating that the submitted solution has been considered the valid solution for the current epoch and rewarded, and that all the activities needed in order to launch the new epoch have been successfully completed.
 
-``` js
+```solidity
 function mint(uint256 nonce) public returns (bool success)
 ```
 
-In particular, the method verifies a submitted solution, described by the nonce (see later):
+**NOTES**:
+1) In particular, the method must verify a submitted solution, described by the nonce (see later):
 * IF the solution found is the first valid solution submitted for the current epoch:
     a) rewards the solution found sending No. miningReward tokens to msg.sender;
     b) creates a new challengeNumber valid for the next POW epoch;
@@ -130,7 +132,7 @@ In particular, the method verifies a submitted solution, described by the nonce 
     d) return true
 * ELSE the solution is not the first valid solution submitted for the current epoch and it returns false (or revert).
 
-NOTE: The first phase (hash check) MUST BE implemented using the below specified public function hash(), while an internal function structure is recommended (see Reccomendation), but it is not mandatory.
+2) The first phase (hash check) MUST BE implemented using the below specified public function hash(), while an internal function structure is recommended (see Reccomendation), but it is not mandatory.
 
 
 
@@ -138,23 +140,20 @@ NOTE: The first phase (hash check) MUST BE implemented using the below specified
 
 Returns the digest calculated by the algorithm of hashing used in the particular implementation, whatever it will be.
 
-``` js
+```solidity
 function hash(uint256 nonce, address minter, bytes32 challengeNumber) public returns (bytes32 digest)
 ```
 
-NOTE: hash() is to be declared public and it MUST include explicitly uint256 nonce, address minter, bytes32 challengeNumber in order to be useful as test function for the mining software development and debugging.
+**NOTES**: hash() is to be declared public and it MUST include explicitly uint256 nonce, address minter, bytes32 challengeNumber in order to be useful as test function for the mining software development and debugging.
 
 
 ### Events
-
-event Mint() 	
-
 
 #### Mint
 
 TO BE MANDATORY EMITTED immediately after that the submitted solution is rewarded. The Mint event indicates the rewarded address, the reward amount, the epoch count and the challenge number used.
 
-``` js
+```solidity
 event Mint(address indexed _to, uint _reward, uint _epochCount, bytes32 _challengeNumber)
 ```
 
@@ -177,20 +176,20 @@ The recommended representation of the solution found is by a ‘nonce’, i.e. a
 
 ###mint() internal structure
 From the miner point of view, submitting a solution for possible reward means to call the mint() function with the suitable arguments and waiting for evaluation results.
-It is recommended that internally the mint() function be realized invoking 4 separate successive phases: hash check, rewarding, epoch increment, difficulty adjustment.
-The first phase (hash check) MUST BE implemented using the specified public function hash(), while an internal function mint() structure is recommended, but it is not mandatory. In particular the following phases, being totally internal to the contract, cannot be specified as mandatory, but the schema where four explicit and subsequent phases are evidenced (hash check, rewarding, epoch increment and difficulty adjustment) is recommended.
+It is recommended that internally the `mint()` function be realized invoking 4 separate successive phases: hash check, rewarding, epoch increment, difficulty adjustment.
+The first phase (hash check) MUST BE implemented using the specified `public function hash()`, while an internal `function mint()` structure is recommended, but it is not mandatory. In particular the following phases, being totally internal to the contract, cannot be specified as mandatory, but the schema where four explicit and subsequent phases are evidenced (hash check, rewarding, epoch increment and difficulty adjustment) is recommended.
 
 In the preferred realization, for each of those steps a suitable function is declared and called:
-1) hash check -> MANDATORY by above spec. 	function hash()
-2) rewarding -> by means of some 		function _reward() internal returns (uint);
-3) epoch increment -> by means of some 	function _epoch() internal returns (uint);
-4) difficulty adj. -> by means of some 	function _adjustDifficulty() internal returns (uint);
+1) hash check -> MANDATORY by above spec. 	`function hash()`
+2) rewarding -> by means of some 		`function _reward() internal returns (uint)`
+3) epoch increment -> by means of some 	`function _epoch() internal returns (uint)`
+4) difficulty adj. -> by means of some 	`function _adjustDifficulty() internal returns (uint)`
 
 It may be useful to recall that a Mint event MUST BE emitted before returning a boolean success flag.
 
 In a sample compliant realization, the mint can be then roughly described as follows:
 
-``` js
+```solidity
 function mint(uint256 nonce) public returns (bool success) {
     require (hash(nonce, minter, challengeNumber) < byte32(miningTarget), “Invalid solution”);
     emit Mint(minter, _reward(), _epochCount, _challengeNumber);
@@ -201,9 +200,9 @@ function mint(uint256 nonce) public returns (bool success) {
 ```            
 
 ##Backwards Compatibility
-In order to facilitate the use of both existing mining programs and existing pool software already used to mine minable tokens deployed before the emission of the present standard, the following function can be included in the contract. They are simply a wrapping of some of the above defined functions:
+In order to facilitate the use of both existing mining programs and existing pool software already used to mine minable tokens deployed before the emission of the present standard, the following functions can be included in the contract. They are simply a wrapping of some of the above defined functions:
 
-``` js
+```solidity
 function getAdjustmentInterval() public view returns (uint) {
             return adjustmentInterval();
 }
@@ -224,7 +223,7 @@ function mint(uint256 _nonce, bytes32 _challenge_digest) public returns (bool su
 }
 ```
 
-Any already existing token implementing this interface can be declared compliant to EIP918-B (B for Backwards). EIP918-B compliance is deprecated.
+**NOTES**: Any already existing token implementing this interface can be declared compliant to EIP918-B (B for Backwards). EIP918-B compliance is deprecated.
 
 
 
