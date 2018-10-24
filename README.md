@@ -33,8 +33,8 @@ It can be here mentioned that token distribution via POW is considered very inte
 
 
 **NOTES**:
- - The following specifications use syntax from Solidity `0.4.25` (or above)
- - Callers MUST handle `false` from `returns (bool success)`.  Callers MUST NOT assume that `false` is never returned!
+ - The following specifications use syntax from Solidity compiler version `0.4.25`
+ - Callers MUST handle `false` from any `returns (bool success)`.  Callers MUST NOT assume that `false` is never returned!
 
 
 #### challengeNumber
@@ -129,7 +129,7 @@ function mint(uint256 nonce) public returns (bool success)
     b) creates a new challengeNumber valid for the next POW epoch;
     c) eventually adjusts the POW difficulty;
     d) return true
-* ELSE the solution is not the first valid solution submitted for the current epoch and it returns false (or revert).
+* ELSE the solution is not the first valid solution submitted for the current epoch and it returns false (or **revert**).
 
 2) The first phase (hash check) MUST BE implemented using the below specified public function hash(), while an internal function structure is recommended (see Reccomendation), but it is not mandatory.
 
@@ -198,7 +198,7 @@ function mint(uint256 nonce) public returns (bool success) {
     _adjustDifficulty();
     return(true);
 }
-```            
+```
 
 ## Backwards Compatibility
 In order to facilitate the use of both existing mining programs and existing pool software already used to mine minable tokens deployed before the emission of the present standard, the following functions can be included in the contract. They are simply a wrapping of some of the above defined functions:
