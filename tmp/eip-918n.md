@@ -226,6 +226,14 @@ function mint(uint256 _nonce, bytes32 _challenge_digest) public returns (bool su
 
 **NOTES**: Any already existing token implementing this interface can be declared compliant to EIP918-B (B for Backwards). **EIP918-B compliance is deprecated.**
 
+## Merged mining
+Merge mining (i.e. the possibility to obtain multiple tokens reward by means of the same POW solution found) is nor mandatory, nor recommended, but in the case that a merge mining facility have to be implemented, it is **MANDATORY** that it is implemented by means of a dedicated methods, as follows:
+
+```solidity
+function merge(uint256 nonce, bytes32 challenge_digest, address[] mineTokens) public returns (bool success);
+```
+
+It is a function operationally very similar to the `mint()` methos, except that in the `merge()` a list of token target addresses is intended to be used to merge the multiple token rewards.
 
 
 ## Implementation notes and examples
