@@ -132,7 +132,9 @@ c) eventually adjusts the POW difficulty;
 d) return true
 * ELSE the solution is not the first valid solution submitted for the current epoch and it returns false (or, in very common implementation, **revert**).
 
-2) The first phase (hash check) MUST BE implemented using the below specified public function `hash()`, while the internal structure of the `mint()` is recommended (see Recommendation), but it is not mandatory.
+2) The first phase (hash check) **MUST BE** implemented using the below specified public function `hash()`
+
+3) The internal structure of the `mint()` is recommended (see Recommendation), but **it is not mandatory**.
 
 
 #### hash
