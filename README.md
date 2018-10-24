@@ -15,8 +15,8 @@ A specification for a standardized minable Token that uses a Proof of Work algor
 
 ## Abstract
 
-he following standard allows for the implementation of a standard API for tokens within smart contracts when including a POW (Proof of Work) mining distribution facility.
-In this kind of token contract, tokens are locked within a token smart contract and slowly dispensed by means of a mint() function which acts like a POW faucet when the user submit a valid solution of some Proof of Work algorithm. The tokens are dispensed in chunks formed by some tokens (reward).
+The following standard allows for the implementation of a standard API for tokens within smart contracts when including a POW (Proof of Work) mining distribution facility.
+In this kind of token contract, tokens are locked within the token smart contract and slowly dispensed by means of a `mint()` function which acts like a POW faucet when the user submit a valid solution of some Proof of Work algorithm. The tokens are dispensed in chunks formed by some tokens ('reward').
 
 
 ## Motivation
@@ -79,18 +79,18 @@ Returns the interval, in seconds, between two successive difficulty adjustment.
 function adjustmentInterval () view public returns (uint256)
 ```
 
-**NOTES**: in a common implementation, while difficulty varies when computational power is added/subtracted to the network, the adjustmentInterval is fixed at deploy time.
+**NOTES**: in a common implementation, while `difficulty` varies when computational power is added/subtracted to the network, the `adjustmentInterval` is fixed at deploy time.
 
 
 #### miningTarget
 
-Returns the miningTarget, i.e. a number which is a threshold useful to evaluate if a given submitted POW solution is valid.
+Returns the `miningTarget`, i.e. a number which is a threshold useful to evaluate if a given submitted POW solution is valid.
 
 ```solidity
 function miningTarget () view public returns (uint256)
 ```
 
-**NOTES**: in a common implementation, the solution is valid if lower than the miningTarget.
+**NOTES**: in a common implementation, the solution is accepted if lower than the `miningTarget`.
 
 
 #### miningReward
@@ -101,7 +101,7 @@ Returns the number of tokens that POW faucet shall dispense as next reward.
 function miningReward() view public returns (uint256)
 ```
 
-**NOTES**: in a common implementation, the reward progressively diminishes toward zero trough the epochs (“epoch” is mining cycle started by the generation of a new challengeNumber and ended by the reward assignment), in order to have a maximum number of tokens dispensed in the whole life of the token smart contract, i.e. after that the maximum number of tokens has been dispensed, no more tokens will be dispensed.
+**NOTES**: in a common implementation, the reward progressively diminishes toward zero trough the epochs (“epoch” is mining cycle started by the generation of a new `challengeNumber` and ended by the reward assignment), in order to have a maximum number of tokens dispensed in the whole life of the token smart contract, i.e. after that the maximum number of tokens has been dispensed, no more tokens will be dispensed.
 
 
 
@@ -123,15 +123,15 @@ function mint(uint256 nonce) public returns (bool success)
 ```
 
 **NOTES**:
-1) In particular, the method must verify a submitted solution, described by the nonce (see later):
+1) In particular, the method must verify a submitted solution, described by the `nonce` (see later):
 * IF the solution found is the first valid solution submitted for the current epoch:
-    a) rewards the solution found sending No. miningReward tokens to msg.sender;
-    b) creates a new challengeNumber valid for the next POW epoch;
+    a) rewards the solution found sending No. `miningReward tokens` to `msg.sender`;
+    b) creates a new `challengeNumber` valid for the next POW epoch;
     c) eventually adjusts the POW difficulty;
     d) return true
 * ELSE the solution is not the first valid solution submitted for the current epoch and it returns false (or **revert**).
 
-2) The first phase (hash check) MUST BE implemented using the below specified public function hash(), while an internal function structure is recommended (see Reccomendation), but it is not mandatory.
+2) The first phase (hash check) MUST BE implemented using the below specified public function `hash()`, while the internal structure of the `mint()` is recommended (see Recommendation), but it is not mandatory.
 
 
 
@@ -143,14 +143,14 @@ Returns the digest calculated by the algorithm of hashing used in the particular
 function hash(uint256 nonce, address minter, bytes32 challengeNumber) public returns (bytes32 digest)
 ```
 
-**NOTES**: hash() is to be declared public and it MUST include explicitly uint256 nonce, address minter, bytes32 challengeNumber in order to be useful as test function for the mining software development and debugging.
+**NOTES**: `hash()` is to be declared `public` and it MUST include explicitly `uint256 nonce, address minter, bytes32 challengeNumber` in order to be useful as test function for the mining software development and debugging as well.
 
 
 ### Events
 
 #### Mint
 
-The Mint event indicates the rewarded address, the reward amount, the epoch count and the challenge number used.
+The `Mint` event indicates the rewarded address, the reward amount, the epoch count and the `challengeNumber` used in order to find the solution.
 
 ```solidity
 event Mint(address indexed _to, uint _reward, uint _epochCount, bytes32 _challengeNumber)
@@ -161,24 +161,22 @@ event Mint(address indexed _to, uint _reward, uint _epochCount, bytes32 _challen
 
 ## Recommendation
 
-#### MITM attacks
+### MITM attacks
+To prevent man-in-the-middle attacks, the `msg.sender` address, which is the address eventually rewarded, should be part of the hash so that any `nonce` solution found is valid only for that particular Ethereum account and it is not susceptible to be used by other. This also allows pools to operate without being easily cheated by the miners because pools can force miners to mine using the pool’s address in the hash algorithm. In that a case, indeed, the pool is the only address able to collect rewards.
 
-To prevent man-in-the-middle attacks, the msg.sender address, which is the address eventually rewarded, should be part of the hash so that any nonce solution found is valid only for that particular Ethereum account and it is not susceptible to be used by other. This also allows pools to operate without being easily cheated by the miners because pools can force miners to mine using the pool’s address in the hash algorithm. In that a case, indeed, the pool is the only address able to collect rewards.
-
-#### Anticipated mining
-
-In order to avoid that miners are in condition to calculate anticipated solutions for later epoch, a “challengeNumber”, i.e. a number somehow derived from existing but mutable conditions, should be part of the hash so that future blocks cannot be mined before. The “challengeNumber” acts like a random piece of data that is not revealed until a mining round starts.
+### Anticipated mining
+In order to avoid that miners are in condition to calculate anticipated solutions for later epoch, a `challengeNumber`, i.e. a number somehow derived from already existing and absolutely stable conditions, should be part of the hash so that future blocks cannot be mined before. The `challengeNumber` acts like a random piece of data that is not revealed until a mining round starts.
 
 ### Hash functions
-The use of solidity keccak256 algorithm is strongly recommended, even if not mandatory, because it is a very cost effective one-way algorithm to compute in the EVM environment and it is available as built-in function in solidity.
+The use of solidity `keccak256` algorithm is strongly recommended, even if not mandatory, because it is a very cost effective one-way algorithm to compute in the EVM environment and it is available as built-in function in solidity.
 
 ### Solution representation
-The recommended representation of the solution found is by a ‘nonce’, i.e. a number, that miners try to find, that being part of the digest make the value of the hash of the digest itself under the required threshold for validity.
+The recommended representation of the solution found is by a `nonce`, i.e. a number, that miners try to find, that being part of the digest make the value of the hash of the digest itself under the required threshold for validity.
 
 ### mint() internal structure
-From the miner point of view, submitting a solution for possible reward means to call the mint() function with the suitable arguments and waiting for evaluation results.
+From the miner point of view, submitting a solution for possible reward means to call the `mint()` function with the suitable arguments and waiting for the result evaluation.
 It is recommended that internally the `mint()` function be realized invoking 4 separate successive phases: hash check, rewarding, epoch increment, difficulty adjustment.
-The first phase (hash check) MUST BE implemented using the specified `public function hash()`, while an internal `function mint()` structure is recommended, but it is not mandatory. In particular the following phases, being totally internal to the contract, cannot be specified as mandatory, but the schema where four explicit and subsequent phases are evidenced (hash check, rewarding, epoch increment and difficulty adjustment) is recommended.
+The first phase (hash check) **MUST BE** implemented using the specified `public function hash()`, while the internal `function mint()` structure is **strongly** recommended, but it is not mandatory. In particular the following phases, being totally internal to the contract, are not specified as mandatory, but the pattern where four explicit and subsequent phases are evidenced (hash check, rewarding, epoch increment and difficulty adjustment) is **strongly** recommended.
 
 In the preferred realization, for each of those steps a suitable function is declared and called:
 1) hash check -> MANDATORY by above spec. 	`function hash()`
@@ -186,9 +184,9 @@ In the preferred realization, for each of those steps a suitable function is dec
 3) epoch increment -> by means of some 	`function _epoch() internal returns (uint)`
 4) difficulty adj. -> by means of some 	`function _adjustDifficulty() internal returns (uint)`
 
-It may be useful to recall that a Mint event MUST BE emitted before returning a boolean success flag.
+It may be useful to recall that a `Mint` event MUST BE emitted after the rewarding phase, before returning the boolean `success` flag.
 
-In a sample compliant realization, the mint can be then roughly described as follows:
+In a sample compliant realization, the `mint` can be then roughly described as follows:
 
 ```solidity
 function mint(uint256 nonce) public returns (bool success) {
@@ -201,7 +199,7 @@ function mint(uint256 nonce) public returns (bool success) {
 ```
 
 ## Backwards Compatibility
-In order to facilitate the use of both existing mining programs and existing pool software already used to mine minable tokens deployed before the emission of the present standard, the following functions can be included in the contract. They are simply a wrapping of some of the above defined functions:
+In order to facilitate the use of both existing mining programs and existing pool software already used to mine any token deployed before the emission of the present standard, the following functions can be included in the contract. They are simply a wrapping of some of the above defined functions:
 
 ```solidity
 function getAdjustmentInterval() public view returns (uint) {
@@ -227,21 +225,19 @@ function mint(uint256 _nonce, bytes32 _challenge_digest) public returns (bool su
 **NOTES**: Any already existing token implementing this interface can be declared compliant to EIP918-B (B for Backwards). **EIP918-B compliance is deprecated.**
 
 ## Merged mining
-Merge mining (i.e. the possibility to obtain multiple tokens reward by means of the same POW solution found) is nor mandatory, nor recommended, but in the case that a merge mining facility have to be implemented, it is **MANDATORY** that it is implemented by means of a dedicated methods, as follows:
+Merge mining (i.e. the possibility to obtain multiple tokens reward by means of the same POW solution found) is nor mandatory, nor recommended, but in the case that a merge mining facility have to be implemented, it is **MANDATORY** to implement it by means of a dedicated methods, as follows:
 
 ```solidity
 function merge(uint256 nonce, bytes32 challenge_digest, address[] mineTokens) public returns (bool success);
 ```
 
-It is a function operationally very similar to the `mint()` methos, except that in the `merge()` a list of token target addresses is intended to be used to merge the multiple token rewards.
+It is a method operationally very similar to the `mint()` methods, except that in the `merge()` a list of token target addresses is intended to be used to merge the multiple token rewards.
 
 
 ## Implementation notes and examples
-
 here, properly reorganized, all the suitable elements from the current draft (interface, abstract contract, etc.)
 
-### Abstract contracts
-
+### Abstract contract
 In order to implement the standard, the following abstract contract can be included and inheritated by the smart contract.
 
 ```solidity
@@ -259,7 +255,7 @@ contract AEIP918B  {
 }
 ```
 
-**NOTES**: given that the current version of the solidity compiler (0.4.25) is not yet able to manage implicit public variables getter as valid overloads on interfaces and abstract contracts, including the previous version of the abstract contract in order to be compliant can generate syntax errors if the overloading functions are intended to be the automaticly created getter of public variables with the same name. the current solutions are: (i) to move public variables declarations in the abstract contract and to omit the related method declaration, or (ii) to name the public variable differently and to write the getter using the naming convention declared by the standard.
+**NOTES**: given that the **current** version of the solidity compiler (0.4.25) is not yet able to manage implicit public variables getter as valid overloads on interfaces and abstract contracts, to include the previous version of the abstract contract in order to be compliant can result in syntax errors if the smart contract overloading functions are intended to be the automatically created (by the compiler, at compile time) getter for public variables with the same name. The current solutions are: (i) to move public variables declarations in the abstract contract and to omit the related getter method declaration, or (ii) to name the public variable differently and to write the getter using the naming convention above declared by this standard.
 
 
 #### Test Cases
