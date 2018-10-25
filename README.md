@@ -51,7 +51,7 @@ function challengeNumber() view public returns (bytes32)
 Returns the current difficulty, i.e. a number useful to estimate (by means of some known algorithm) the mean time required to find a valid POW solution. It is expected that the `difficulty` varies if the smart contract controls the mean time between valid solutions by means of some control loop.
 
 ```solidity
-function difficulty() view public returns (uint256)
+function difficulty() view public returns (uint)
 ```
 
 **NOTES**: in a common implementation, difficulty varies when computational power is added/subtracted to the network, in order to maintain stable the mean time between valid solutions found.
@@ -61,14 +61,14 @@ function difficulty() view public returns (uint256)
 Returns the current epoch, i.e. the number of successful minting operation so far (starting from zero).
 
 ```solidity
-function epochCount() view public returns (uint256)
+function epochCount() view public returns (uint)
 ```
 
 #### adjustmentInterval
 Returns the interval, in seconds, between two successive difficulty adjustment.
 
 ```solidity
-function adjustmentInterval () view public returns (uint256)
+function adjustmentInterval () view public returns (uint)
 ```
 **NOTES**: in a common implementation, while `difficulty` varies when computational power is added/subtracted to the network, the `adjustmentInterval` is fixed at deploy time.
 
@@ -77,7 +77,7 @@ function adjustmentInterval () view public returns (uint256)
 Returns the `miningTarget`, i.e. a number which is a threshold useful to evaluate if a given submitted POW solution is valid.
 
 ```solidity
-function miningTarget () view public returns (uint256)
+function miningTarget () view public returns (uint)
 ```
 
 **NOTES**: in a common implementation, the solution is accepted if lower than the `miningTarget`.
@@ -86,7 +86,7 @@ function miningTarget () view public returns (uint256)
 Returns the number of tokens that POW faucet shall dispense as next reward.
 
 ```solidity
-function miningReward() view public returns (uint256)
+function miningReward() view public returns (uint)
 ```
 
 **NOTES**: in a common implementation, the reward progressively diminishes toward zero trough the epochs (“epoch” is the mining cycle started by the generation of a new `challengeNumber` and ended by the `reward` assignment), in order to have a maximum number of tokens dispensed in the whole life of the token smart contract, i.e. after that the maximum number of tokens has been dispensed, no more tokens will be dispensed.
@@ -95,14 +95,14 @@ function miningReward() view public returns (uint256)
 Returns the total number of tokens dispensed so far by POW faucet
 
 ```solidity
-function tokensMinted() view public returns (uint256)
+function tokensMinted() view public returns (uint)
 ```
 
 #### mint
 Returns a flag indicating that the submitted solution has been considered the valid solution for the current epoch and rewarded, and that all the activities needed in order to launch the new epoch have been successfully completed.
 
 ```solidity
-function mint(uint256 nonce) public returns (bool success)
+function mint(uint nonce) public returns (bool success)
 ```
 
 **NOTES**:
@@ -124,10 +124,10 @@ e) returns true.
 Returns the digest calculated by the algorithm of hashing used in the particular implementation, whatever it be.
 
 ```solidity
-function hash(uint256 nonce, address minter, bytes32 challengeNumber) public returns (bytes32 digest)
+function hash(uint nonce, address minter, bytes32 challengeNumber) public returns (bytes32 digest)
 ```
 
-**NOTES**: `hash()` is to be declared `public` and it MUST include explicitly `uint256 nonce, address minter, bytes32 challengeNumber` in order to be useful as test function for the mining software development and debugging as well.
+**NOTES**: `hash()` is to be declared `public` and it MUST include explicitly `uint nonce, address minter, bytes32 challengeNumber` in order to be useful as test function for the mining software development and debugging as well.
 
 
 ### Events
@@ -171,8 +171,8 @@ It may be useful to recall that a `Mint` event MUST BE emitted after the rewardi
 In a sample compliant realization, the `mint` can be then **roughly** described as follows:
 
 ```solidity
-function mint(uint256 nonce) public returns (bool success) {
-    require (uint256(hash(nonce, minter, challengeNumber())) <= miningTarget(), “Invalid solution”);
+function mint(uint nonce) public returns (bool success) {
+    require (uint(hash(nonce, minter, challengeNumber())) <= miningTarget(), “Invalid solution”);
     emit Mint(minter, _reward(), epochCount(), challengeNumber());
     _epoch();
     _adjustDifficulty();
@@ -184,7 +184,7 @@ function mint(uint256 nonce) public returns (bool success) {
 Merged mining (i.e. the possibility to obtain multiple tokens reward by means of the same POW solution found) is nor mandatory, nor recommended, but in the case that a merge mining facility have to be implemented, it is **MANDATORY** to implement it by means of a dedicated methods, as follows:
 
 ```solidity
-function merge(uint256 nonce, bytes32 challenge_digest, address[] mineTokens) public returns (bool success);
+function merge(uint nonce, bytes32 challenge_digest, address[] mineTokens) public returns (bool success);
 ```
 
 It is a method operationally very similar to the `mint()` methods, except that in the `merge()` a list of token target addresses is intended to be used to merge the multiple token rewards.
@@ -208,7 +208,7 @@ function getMiningReward() public view returns (uint) {
             return miningReward();
 }
 
-function mint(uint256 _nonce, bytes32 _challenge_digest) public returns (bool success) {
+function mint(uint _nonce, bytes32 _challenge_digest) public returns (bool success) {
             return mint (_nonce);
 }
 ```
@@ -224,14 +224,14 @@ In order to implement the standard, the following abstract contract can be inclu
 ```solidity
 contract AEIP918B  {
   function challengeNumber() public view returns (bytes32);
-  function difficulty() public view returns (uint256);
-  function epochCount() public view returns (uint256);
-  function adjustmentInterval () public view returns (uint256);
-  function miningTarget () public view returns (uint256);
-  function miningReward() public view returns (uint256);
-  function tokensMinted() public view returns (uint256);
-  function mint(uint256 nonce) public returns (bool success);
-  function hash(uint256 nonce, address minter, bytes32 challengeNumber) public returns (bytes32 digest);
+  function difficulty() public view returns (uint);
+  function epochCount() public view returns (uint);
+  function adjustmentInterval () public view returns (uint);
+  function miningTarget () public view returns (uint);
+  function miningReward() public view returns (uint);
+  function tokensMinted() public view returns (uint);
+  function mint(uint nonce) public returns (bool success);
+  function hash(uint nonce, address minter, bytes32 challengeNumber) public returns (bytes32 digest);
   event Mint(address indexed _to, uint _reward, uint _epochCount, bytes32 _challengeNumber);
 }
 ```
