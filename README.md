@@ -189,7 +189,8 @@ In a sample compliant realization, the `mint` can be then roughly described as f
 
 ```solidity
 function mint(uint256 nonce) public returns (bool success) {
-    require (hash(nonce, minter, challengeNumber) < byte32(miningTarget), “Invalid solution”);
+    require (hash(nonce, minter, challengeNumber) <= byte32(miningTarget), “Invalid solution”);
+    _reward();
     emit Mint(minter, _reward(), _epochCount, _challengeNumber);
     _epoch();
     _adjustDifficulty();
