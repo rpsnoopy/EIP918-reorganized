@@ -121,7 +121,7 @@ e) returns true.
 3) It is below defined a recommended (i.e. not mandatory) internal structure for the `mint()`, which should be adopted if there are not contrary reasons.
 
 #### hash
-Returns the digest calculated by the algorithm of hashing used in the particular implementation, whatever it will be.
+Returns the digest calculated by the algorithm of hashing used in the particular implementation, whatever it be.
 
 ```solidity
 function hash(uint256 nonce, address minter, bytes32 challengeNumber) public returns (bytes32 digest)
