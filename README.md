@@ -199,7 +199,7 @@ function mint(uint256 nonce) public returns (bool success) {
 ```
 
 ### Merged mining
-Merge mining (i.e. the possibility to obtain multiple tokens reward by means of the same POW solution found) is nor mandatory, nor recommended, but in the case that a merge mining facility have to be implemented, it is **MANDATORY** to implement it by means of a dedicated methods, as follows:
+Merged mining (i.e. the possibility to obtain multiple tokens reward by means of the same POW solution found) is nor mandatory, nor recommended, but in the case that a merge mining facility have to be implemented, it is **MANDATORY** to implement it by means of a dedicated methods, as follows:
 
 ```solidity
 function merge(uint256 nonce, bytes32 challenge_digest, address[] mineTokens) public returns (bool success);
