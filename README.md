@@ -168,17 +168,12 @@ In the preferred realization, for each of those steps a suitable function is dec
 
 It may be useful to recall that a `Mint` event MUST BE emitted after the rewarding phase, before returning the boolean `success` flag.
 
-In a sample compliant realization, the `mint` can be then roughly described as follows:
+In a sample compliant realization, the `mint` can be then **roughly** described as follows:
 
 ```solidity
 function mint(uint256 nonce) public returns (bool success) {
-<<<<<<< HEAD
     require (uint256(hash(nonce, minter, challengeNumber())) <= miningTarget(), “Invalid solution”);
     emit Mint(minter, _reward(), epochCount(), challengeNumber());
-=======
-    require ( hash(nonce, minter, challengeNumber <= byte32(miningTarget), “Invalid solution”);
-    emit Mint(minter, _reward(), epochCount, challengeNumber);
->>>>>>> d71fe4b4d8d23a6d765de4a421845556fe7e1814
     _epoch();
     _adjustDifficulty();
     return(true);
